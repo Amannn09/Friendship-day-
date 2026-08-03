@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Friendship Day 🌸</title>
+<style>
+:root{
+  --plum:#241226;
+  --plum-deep:#160a1a;
+  --gold:#d9b969;
+  --pink:#e6a9c9;
+  --lavender:#c9a9e6;
+  --white:#fdf9fb;
+  --glass:rgba(255,255,255,0.08);
+  --glass-border:rgba(255,255,255,0.18);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Segoe UI',Georgia,'Times New Roman',serif;
+  background:var(--plum-deep);
+  color:var(--white);
+  overflow-x:hidden;
+  min-height:100vh;
+}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif;font-weight:600;letter-spacing:0.5px;}
+
+/* ---------- AURORA BACKGROUND ---------- */
+.aurora{position:fixed;inset:0;z-index:-2;overflow:hidden;background:var(--plum-deep);}
+.aurora::before,.aurora::after{
+  content:'';position:absolute;width:140vmax;height:140vmax;
+  background:radial-gradient(circle at 30% 30%, rgba(217,185,105,0.18), transparent 60%),
+             radial-gradient(circle at 70% 70%, rgba(201,169,230,0.22), transparent 60%),
+             radial-gradient(circle at 50% 50%, rgba(230,169,201,0.15), transparent 60%);
+  top:-20vmax;left:-20vmax;animation:auroraSpin 40s linear infinite;
+}
+.aurora::after{animation-duration:60s;animation-direction:reverse;opacity:0.6;}
+@keyframes auroraSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+/* ---------- LOADING SCREEN ---------- */
+#loader{
+  position:fixed;inset:0;z-index:9999;background:var(--plum-deep);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  transition:opacity 0.8s ease, visibility 0.8s ease;
+}
+#loader.hide{opacity:0;visibility:hidden;}
+.loader-logo{font-size:2.5rem;color:var(--gold);animation:pulseGlow 1.5s ease-in-out infinite;}
+@keyframes pulseGlow{0%,100%{transform:scale(1);opacity:0.7;}50%{transform:scale(1.15);opacity:1;}}
+.loader-sub{margin-top:12px;font-size:0.85rem;letter-spacing:3px;color:var(--lavender);text-transform:uppercase;}
+
+/* ---------- SCROLL PROGRESS ---------- */
+#scrollProgress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--pink));z-index:9000;width:0%;}
+
+/* ---------- CURSOR GLOW ---------- */
+#cursorGlow{
+  position:fixed;width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle, rgba(217,185,105,0.10), transparent 70%);
+  pointer-events:none;z-index:1;transform:translate(-50%,-50%);
+  transition:opacity 0.3s;
+}
+
+/* ---------- FLOATING PARTICLES ---------- */
+.particle{position:fixed;pointer-events:none;z-index:2;user-select:none;}
+
+/* ---------- GLASS CARD ---------- */
+.glass{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-radius:20px;
+}
+
+/* ---------- SECTIONS ---------- */
+section{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:80px 20px;position:relative;text-align:center;
+}
+
+/* HERO */
+#hero h1{
+  font-size:clamp(2.2rem,7vw,4.5rem);
+  background:linear-gradient(90deg,var(--gold),var(--pink),var(--lavender));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:heroFade 1.5s ease;
+}
+@keyframes heroFade{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+#hero p{max-width:560px;margin:24px auto;font-size:1.05rem;line-height:1.7;color:var(--white);opacity:0.85;font-style:italic;}
+.btn-glow{
+  margin-top:30px;padding:16px 38px;border:none;border-radius:50px;
+  background:linear-gradient(90deg,var(--gold),var(--pink));
+  color:var(--plum-deep);font-size:1rem;font-weight:700;cursor:pointer;
+  box-shadow:0 0 30px rgba(217,185,105,0.5);
+  transition:transform 0.3s, box-shadow 0.3s;
+}
+.btn-glow:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 0 45px rgba(217,185,105,0.75);}
+
+/* LETTER */
+.letter-box{max-width:640px;padding:50px 36px;text-align:left;}
+.letter-text{font-family:'Brush Script MT',cursive,Georgia;font-size:1.35rem;line-height:2;white-space:pre-wrap;color:var(--white);}
+.letter-signature{margin-top:20px;text-align:right;color:var(--gold);}
+
+/* TIMELINE */
+.timeline-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;max-width:900px;width:100%;}
+.tl-card{padding:28px 16px;opacity:0;transform:translateY(40px);transition:all 0.7s ease;}
+.tl-card.show{opacity:1;transform:translateY(0);}
+.tl-emoji{font-size:2rem;margin-bottom:10px;}
+.tl-label{font-size:0.95rem;color:var(--pink);}
+
+/* GALLERY */
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;max-width:900px;width:100%;}
+.gallery-item{position:relative;border-radius:16px;overflow:hidden;cursor:pointer;aspect-ratio:1/1;border:1px solid var(--glass-border);}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s;}
+.gallery-item:hover img{transform:scale(1.08);}
+#lightbox{
+  position:fixed;inset:0;background:rgba(10,4,12,0.92);z-index:8000;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+#lightbox.active{display:flex;}
+#lightbox img{max-width:90%;max-height:85%;border-radius:12px;box-shadow:0 0 60px rgba(217,185,105,0.5);}
+#lightbox .close-lb{position:absolute;top:24px;right:30px;font-size:2rem;color:var(--white);cursor:pointer;}
+
+/* QUOTES */
+.quote-box{max-width:600px;padding:40px;font-size:1.2rem;font-style:italic;min-height:120px;display:flex;align-items:center;justify-content:center;}
+
+/* COUNTER */
+.counter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;max-width:800px;width:100%;}
+.counter-card{padding:26px 10px;}
+.counter-num{font-size:2rem;color:var(--gold);font-weight:700;}
+.counter-label{font-size:0.85rem;color:var(--lavender);margin-top:6px;}
+
+/* SURPRISE */
+#finalOverlay{
+  position:fixed;inset:0;background:rgba(10,4,12,0.94);z-index:8500;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+#finalOverlay.active{display:flex;}
+#finalOverlay .glass{max-width:520px;padding:44px 30px;font-size:1.1rem;line-height:1.9;white-space:pre-wrap;}
+#finalOverlay .close-lb{position:absolute;top:24px;right:30px;font-size:2rem;color:var(--white);cursor:pointer;}
+
+/* FOOTER */
+footer{padding:60px 20px;text-align:center;opacity:0.85;}
+footer .foot-heart{cursor:default;font-size:1.4rem;}
+
+/* MUSIC TOGGLE */
+#musicToggle{
+  position:fixed;bottom:24px;left:24px;z-index:5000;
+  width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1.3rem;
+}
+/* BACK TO TOP */
+#backToTop{
+  position:fixed;bottom:24px;right:24px;z-index:5000;
+  width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1.2rem;opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+#backToTop.show{opacity:1;pointer-events:auto;}
+
+/* OWNER_CSS_START */
+/* ---------- OWNER-ONLY CUSTOMIZE PANEL (built dynamically, never in static HTML) ---------- */
+#ownerPanel{
+  position:fixed;top:0;right:0;height:100vh;width:320px;max-width:88vw;
+  background:rgba(20,10,22,0.97);border-left:1px solid var(--glass-border);
+  z-index:9500;padding:24px 20px;overflow-y:auto;
+  transform:translateX(100%);transition:transform 0.4s ease;
+}
+#ownerPanel.open{transform:translateX(0);}
+#ownerPanel h3{color:var(--gold);font-size:1.1rem;margin-bottom:16px;}
+#ownerPanel label{display:block;font-size:0.8rem;color:var(--lavender);margin:14px 0 6px;}
+#ownerPanel input[type=file]{width:100%;font-size:0.75rem;color:var(--white);}
+#ownerPanel button{
+  margin-top:22px;width:100%;padding:12px;border:none;border-radius:10px;
+  background:linear-gradient(90deg,var(--gold),var(--pink));color:var(--plum-deep);
+  font-weight:700;cursor:pointer;
+}
+#ownerToggleBtn{
+  position:fixed;bottom:88px;left:24px;z-index:5000;
+  width:44px;height:44px;border-radius:50%;background:var(--glass);
+  border:1px solid var(--glass-border);display:none;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--gold);font-size:1rem;
+}
+/* OWNER_CSS_END */
+
+@media(max-width:600px){
+  section{padding:60px 16px;}
+}
+</style>
+</head>
+<body>
+
+<div class="aurora"></div>
+<div id="cursorGlow"></div>
+<div id="scrollProgress"></div>
+
+<div id="loader">
+  <div class="loader-logo">❤️</div>
+  <div class="loader-sub">loading your surprise</div>
+</div>
+
+<!-- ============ HERO ============ -->
+<section id="hero">
+  <h1>Happy Friendship Day ❤️</h1>
+  <p>Some people become part of our story without even trying. Thank you for making countless ordinary moments feel unforgettable.</p>
+  <button class="btn-glow" onclick="openSurprise()">Open Your Surprise ✨</button>
+</section>
+
+<!-- ============ LETTER ============ -->
+<section id="letterSection">
+  <div class="glass letter-box">
+    <div class="letter-text" id="letterText"></div>
+  </div>
+</section>
+
+<!-- ============ TIMELINE ============ -->
+<section id="timeline">
+  <h2 style="margin-bottom:36px;color:var(--gold);">Our Journey</h2>
+  <div class="timeline-grid">
+    <div class="glass tl-card"><div class="tl-emoji">🌸</div><div class="tl-label">First Conversation</div></div>
+    <div class="glass tl-card"><div class="tl-emoji">😊</div><div class="tl-label">Endless Laughs</div></div>
+    <div class="glass tl-card"><div class="tl-emoji">☕</div><div class="tl-label">Random Chats</div></div>
+    <div class="glass tl-card"><div class="tl-emoji">🤝</div><div class="tl-label">Trust</div></div>
+    <div class="glass tl-card"><div class="tl-emoji">💖</div><div class="tl-label">Beautiful Memories</div></div>
+    <div class="glass tl-card"><div class="tl-emoji">🌍</div><div class="tl-label">Friends Forever</div></div>
+  </div>
+</section>
+
+<!-- ============ GALLERY ============ -->
+<section id="gallery">
+  <h2 style="margin-bottom:30px;color:var(--gold);">Memory Gallery</h2>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</section>
+
+<div id="lightbox">
+  <span class="close-lb" onclick="closeLightbox()">&times;</span>
+  <img id="lightboxImg" src="" alt="memory">
+</div>
+
+<!-- ============ QUOTES ============ -->
+<section id="quotes">
+  <h2 style="margin-bottom:10px;color:var(--gold);">Friendship Quotes</h2>
+  <div class="glass quote-box" id="quoteBox"></div>
+</section>
+
+<!-- ============ COUNTER ============ -->
+<section id="counter">
+  <h2 style="margin-bottom:30px;color:var(--gold);">In Numbers</h2>
+  <div class="counter-grid">
+    <div class="glass counter-card"><div class="counter-num" data-target="999">0</div><div class="counter-label">Days of Friendship ❤️</div></div>
+    <div class="glass counter-card"><div class="counter-num" id="c-smiles">😊</div><div class="counter-label">Smiles Shared — Unlimited</div></div>
+    <div class="glass counter-card"><div class="counter-num" id="c-mem">📸</div><div class="counter-label">Memories — Forever</div></div>
+    <div class="glass counter-card"><div class="counter-num" id="c-sup">🤝</div><div class="counter-label">Support — Infinite</div></div>
+  </div>
+</section>
+
+<!-- ============ SURPRISE ============ -->
+<section id="surprise">
+  <button class="btn-glow" onclick="showFinal()">One Last Surprise 💝</button>
+</section>
+
+<div id="finalOverlay">
+  <span class="close-lb" onclick="closeFinal()">&times;</span>
+  <div class="glass">Thank you for being one of the best parts of my life.
+
+No matter what happens in the future...
+
+I hope our friendship always stays this beautiful.
+
+Happy Friendship Day ❤️</div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <p>Some friendships don't need promises. They simply become unforgettable.</p>
+  <p style="margin-top:14px;opacity:0.7;font-size:0.9rem;">Made with gratitude, respect, and lots of good wishes.
+    <span class="foot-heart" id="secretTrigger">❤️</span>
+  </p>
+  <h3 style="margin-top:20px;color:var(--gold);">Happy Friendship Day 🌸</h3>
+</footer>
+
+<div id="musicToggle" class="glass">🔇</div>
+<div id="backToTop" class="glass">⬆️</div>
+<audio id="bgMusic" loop></audio>
+
+<!-- OWNER_UI_START -->
+<div id="ownerToggleBtn">⚙️</div>
+<div id="ownerPanel">
+  <h3>🔒 Owner Customize Panel</h3>
+  <p style="font-size:0.72rem;color:#bbb;">Ye panel sirf tumhe dikhta hai. Yahan se photos/audio upload karo, phir neeche "Export Final HTML" dabao — woh file friends ko bhejna, is panel ka code usme hoga hi nahi.</p>
+
+  <label>Gallery Photo 1</label><input type="file" accept="image/*" data-slot="0">
+  <label>Gallery Photo 2</label><input type="file" accept="image/*" data-slot="1">
+  <label>Gallery Photo 3</label><input type="file" accept="image/*" data-slot="2">
+  <label>Gallery Photo 4</label><input type="file" accept="image/*" data-slot="3">
+  <label>Gallery Photo 5</label><input type="file" accept="image/*" data-slot="4">
+  <label>Gallery Photo 6</label><input type="file" accept="image/*" data-slot="5">
+  <label>Background Music (mp3)</label><input type="file" accept="audio/*" id="audioInput">
+
+  <button onclick="saveOwnerAssets()">💾 Save Preview</button>
+  <button onclick="exportCleanHTML()" style="margin-top:10px;">⬇️ Export Final HTML (send this to friends)</button>
+  <button onclick="lockOwnerMode()" style="margin-top:10px;background:transparent;border:1px solid var(--glass-border);color:var(--white);">🔒 Lock / Exit Owner Mode</button>
+</div>
+<!-- OWNER_UI_END -->
+
+<script>
+/* ---------- default placeholder assets (replace via owner panel) ---------- */
+const defaultImages = [
+  "https://placehold.co/400x400/241226/e6a9c9?text=Photo+1",
+  "https://placehold.co/400x400/241226/c9a9e6?text=Photo+2",
+  "https://placehold.co/400x400/241226/d9b969?text=Photo+3",
+  "https://placehold.co/400x400/241226/e6a9c9?text=Photo+4",
+  "https://placehold.co/400x400/241226/c9a9e6?text=Photo+5",
+  "https://placehold.co/400x400/241226/d9b969?text=Photo+6"
+];
+
+let currentImages = JSON.parse(localStorage.getItem('fd_images') || 'null') || defaultImages.slice();
+let currentAudio = localStorage.getItem('fd_audio') || "";
+
+/* ---------- LOADER ---------- */
+window.addEventListener('load', ()=>{
+  setTimeout(()=>document.getElementById('loader').classList.add('hide'), 900);
+});
+
+/* ---------- SCROLL PROGRESS + BACK TO TOP ---------- */
+window.addEventListener('scroll', ()=>{
+  const h = document.documentElement;
+  const pct = (h.scrollTop)/(h.scrollHeight-h.clientHeight)*100;
+  document.getElementById('scrollProgress').style.width = pct+'%';
+  document.getElementById('backToTop').classList.toggle('show', h.scrollTop>400);
+});
+document.getElementById('backToTop').onclick = ()=>window.scrollTo({top:0,behavior:'smooth'});
+
+/* ---------- CURSOR GLOW ---------- */
+document.addEventListener('mousemove', e=>{
+  const g = document.getElementById('cursorGlow');
+  g.style.left = e.clientX+'px'; g.style.top = e.clientY+'px';
+});
+
+/* ---------- FLOATING PARTICLES (hearts/sparkles/petals) ---------- */
+function spawnParticles(count, emojis){
+  for(let i=0;i<count;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    p.style.left = Math.random()*100+'vw';
+    p.style.top = '-40px';
+    p.style.fontSize = (14+Math.random()*18)+'px';
+    p.style.opacity = 0.6+Math.random()*0.4;
+    document.body.appendChild(p);
+    const duration = 6+Math.random()*6;
+    const drift = (Math.random()*100-50);
+    p.animate([
+      {transform:'translate(0,0) rotate(0deg)', opacity:p.style.opacity},
+      {transform:`translate(${drift}px, 110vh) rotate(360deg)`, opacity:0}
+    ], {duration:duration*1000, easing:'linear'});
+    setTimeout(()=>p.remove(), duration*1000);
+  }
+}
+setInterval(()=>spawnParticles(3, ['🌸','✨','💖']), 1200);
+
+/* ---------- HERO -> LETTER ---------- */
+function openSurprise(){
+  spawnParticles(30, ['🌸','💗','✨']);
+  document.getElementById('letterSection').scrollIntoView({behavior:'smooth'});
+  typeLetter();
+}
+let letterTyped = false;
+function typeLetter(){
+  if(letterTyped) return;
+  letterTyped = true;
+  const text = `Happy Friendship Day 🌸
+
+I don't know if I say this often enough, but I'm really grateful that you're in my life.
+
+Thank you for every laugh, every random conversation, every piece of advice, and every moment you've shared with me.
+
+Your kindness, your smile, and your positive energy make people around you happier than you probably realize.
+
+No matter how busy life becomes or where our paths take us, I hope we always remain good friends.
+
+You truly deserve happiness, success, peace, and endless beautiful memories.
+
+Stay exactly the wonderful person you are.
+
+Happy Friendship Day ❤️`;
+  const el = document.getElementById('letterText');
+  let i=0;
+  const timer = setInterval(()=>{
+    el.textContent += text[i];
+    i++;
+    if(i>=text.length){
+      clearInterval(timer);
+      spawnParticles(40, ['🎉','💫','💖']);
+    }
+  }, 28);
+}
+
+/* ---------- TIMELINE SCROLL REVEAL ---------- */
+const tlObserver = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('show'); });
+},{threshold:0.3});
+document.querySelectorAll('.tl-card').forEach(c=>tlObserver.observe(c));
+
+/* ---------- GALLERY RENDER ---------- */
+function renderGallery(){
+  const grid = document.getElementById('galleryGrid');
+  grid.innerHTML='';
+  currentImages.forEach(src=>{
+    const div = document.createElement('div');
+    div.className='gallery-item';
+    div.innerHTML = `<img src="${src}" alt="memory">`;
+    div.onclick = ()=>openLightbox(src);
+    grid.appendChild(div);
+  });
+}
+renderGallery();
+function openLightbox(src){
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('active'); }
+
+/* ---------- QUOTES SLIDER ---------- */
+const quotes = [
+  "True friendship is one soul in two different journeys.",
+  "Distance never weakens genuine friendship.",
+  "A good friend turns ordinary moments into lifelong memories.",
+  "A real friend is one of life's greatest blessings."
+];
+let qi=0;
+const quoteBox = document.getElementById('quoteBox');
+quoteBox.textContent = quotes[0];
+setInterval(()=>{
+  qi=(qi+1)%quotes.length;
+  quoteBox.style.opacity=0;
+  setTimeout(()=>{ quoteBox.textContent = quotes[qi]; quoteBox.style.opacity=1; }, 400);
+}, 3500);
+quoteBox.style.transition='opacity 0.4s';
+
+/* ---------- COUNTER ANIMATION ---------- */
+const counterObserver = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el = e.target;
+      const target = parseInt(el.dataset.target);
+      let cur=0;
+      const step = Math.ceil(target/60);
+      const t = setInterval(()=>{
+        cur += step;
+        if(cur>=target){cur=target; clearInterval(t);}
+        el.textContent = cur+'+';
+      }, 20);
+      counterObserver.unobserve(el);
+    }
+  });
+},{threshold:0.5});
+document.querySelectorAll('.counter-num[data-target]').forEach(el=>counterObserver.observe(el));
+
+/* ---------- FINAL SURPRISE ---------- */
+function showFinal(){
+  document.getElementById('finalOverlay').classList.add('active');
+  spawnParticles(50, ['💝','💖','✨']);
+}
+function closeFinal(){ document.getElementById('finalOverlay').classList.remove('active'); }
+
+/* ---------- MUSIC ---------- */
+const bgMusic = document.getElementById('bgMusic');
+if(currentAudio) bgMusic.src = currentAudio;
+let playing=false;
+document.getElementById('musicToggle').onclick=()=>{
+  if(!bgMusic.src){ alert('Abhi tak koi music upload nahi hui.'); return; }
+  playing = !playing;
+  if(playing){ bgMusic.play(); document.getElementById('musicToggle').textContent='🔊'; }
+  else{ bgMusic.pause(); document.getElementById('musicToggle').textContent='🔇'; }
+};
+
+/* OWNER_JS_START */
+/* ============================================================
+   OWNER MODE — password gated, panel built only after unlock
+   CUSTOMIZE HERE: change this password to your own secret
+   ============================================================ */
+const OWNER_PASSWORD = "priti2026"; // <-- change this before deploying
+let clickCount = 0, clickTimer;
+document.getElementById('secretTrigger').addEventListener('click', ()=>{
+  clickCount++;
+  clearTimeout(clickTimer);
+  clickTimer = setTimeout(()=>clickCount=0, 1500);
+  if(clickCount>=5){
+    clickCount=0;
+    tryUnlock();
+  }
+});
+// URL shortcut: add ?owner=1 to jump straight to password prompt
+if(new URLSearchParams(location.search).get('owner')==='1'){ tryUnlock(); }
+
+function tryUnlock(){
+  const pass = prompt("Owner password:");
+  if(pass === OWNER_PASSWORD){
+    localStorage.setItem('fd_isOwner','true');
+    enableOwnerUI();
+  } else if(pass !== null){
+    alert("Galat password.");
+  }
+}
+function enableOwnerUI(){
+  document.getElementById('ownerToggleBtn').style.display='flex';
+  document.getElementById('ownerToggleBtn').onclick = ()=>{
+    document.getElementById('ownerPanel').classList.toggle('open');
+  };
+}
+if(localStorage.getItem('fd_isOwner')==='true'){ enableOwnerUI(); }
+
+function lockOwnerMode(){
+  localStorage.removeItem('fd_isOwner');
+  document.getElementById('ownerPanel').classList.remove('open');
+  document.getElementById('ownerToggleBtn').style.display='none';
+}
+
+function fileToBase64(file){
+  return new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = ()=>res(r.result);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+async function saveOwnerAssets(){
+  const inputs = document.querySelectorAll('#ownerPanel input[type=file][data-slot]');
+  for(const inp of inputs){
+    if(inp.files[0]){
+      const b64 = await fileToBase64(inp.files[0]);
+      currentImages[parseInt(inp.dataset.slot)] = b64;
+    }
+  }
+  const audioInput = document.getElementById('audioInput');
+  if(audioInput.files[0]){
+    currentAudio = await fileToBase64(audioInput.files[0]);
+    bgMusic.src = currentAudio;
+  }
+  localStorage.setItem('fd_images', JSON.stringify(currentImages));
+  localStorage.setItem('fd_audio', currentAudio);
+  renderGallery();
+  alert('Saved! Preview update ho gaya. Ab "Export Final HTML" dabao final file ke liye.');
+}
+
+/* Builds a CLEAN copy of this page with assets baked in and
+   ALL owner/editor code stripped out, then downloads it. */
+function exportCleanHTML(){
+  fetch(location.href).then(r=>r.text()).then(html=>{
+    if(!html || html.length < 500){ throw new Error('empty'); }
+    // inject current images/audio as the new defaults
+    const imgArrStr = JSON.stringify(currentImages);
+    html = html.replace(/const defaultImages = \[[\s\S]*?\];/, `const defaultImages = ${imgArrStr};`);
+    html = html.replace(/let currentAudio = localStorage\.getItem\('fd_audio'\) \|\| "";/,
+      `let currentAudio = ${JSON.stringify(currentAudio)};`);
+    // strip owner-only DOM block (between marker comments)
+    html = html.replace(/<!-- OWNER_UI_START -->[\s\S]*?<!-- OWNER_UI_END -->/, '');
+    // strip owner-only CSS block (between marker comments)
+    html = html.replace(/\/\* OWNER_CSS_START \*\/[\s\S]*?\/\* OWNER_CSS_END \*\//, '');
+    // strip owner-only JS block (between marker comments)
+    html = html.replace(/\/\* OWNER_JS_START \*\/[\s\S]*?\/\* OWNER_JS_END \*\//, '');
+
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'friendship-day-final.html';
+    a.click();
+    URL.revokeObjectURL(url);
+  }).catch(()=>{
+    alert('Export tabhi kaam karega jab ye file kisi web server / GitHub Pages pe host ho (local file:// mein fetch block ho jata hai). Pehle isse GitHub Pages pe daalo, wahin se customize + export karo.');
+  });
+}
+/* OWNER_JS_END */
+</script>
+</body>
+</html>
